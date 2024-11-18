@@ -1071,3 +1071,231 @@ int main()
 
     return 0;
 }
+
+//First fit
+#include <stdio.h>
+
+int main() {
+    int n, i, m, j, count = 0, k;
+
+    printf("\nEnter the number of Processors: ");
+    scanf("%d", &n);
+
+    int P[n], I[n];  // Array for Process values and allocation markers
+
+    printf("\nEnter %d Process Values: ", n);
+    for(i = 0; i < n; i++) {
+        scanf("%d", &P[i]);
+    }
+
+    printf("\nEnter the number of Memory Blocks: ");
+    scanf("%d", &m);
+
+    int B[m];  // Array for Memory Block sizes
+
+    printf("\nEnter %d Memory Values: ", m);
+    for(i = 0; i < m; i++) {
+        scanf("%d", &B[i]);
+    }
+
+    printf("\n P[n]          B[m]        \n\n");
+    for(i = 0; i < m; i++) {
+        if(i < n) {
+            printf("P%d = %d", i, P[i]);
+            printf("          B%d = %d\n", i, B[i]);
+        } else {
+            printf("                  B%d = %d\n", i, B[i]);
+        }
+    }
+
+    // First Fit Algorithm for memory allocation
+    for(i = 0; i < n; i++) {
+        for(j = 0; j < m; j++) {
+            if(P[i] <= B[j]) {
+                // Check if block B[j] is already allocated
+                for(k = 0; k < count; k++) {
+                    if(I[k] == j)
+                        break;
+                }
+
+                // If not allocated, allocate the memory block to the processor
+                if(count == k) {
+                    B[j] = P[i];
+                    I[count] = j;  // Mark the block as allocated
+                    count++;       // Increment the count of allocated blocks
+                    break;
+                }
+            }
+        }
+    }
+
+    // Output after allocation
+    printf("\nAfter Allocating the value Memory Block is:\n");
+
+    for(i = 0; i < m; i++) {
+        if(i < n) {
+            printf("P%d = %d", i, P[i]);
+            printf("          B%d = %d\n", i, B[i]);
+        } else {
+            printf("                  B%d = %d\n", i, B[i]);
+        }
+    }
+
+    return 0;
+}
+
+
+
+//Best fit
+#include <stdio.h>
+
+void bestFit(int P[], int n, int B[], int m) {
+    int I[n];  // Array for memory block allocation markers
+    int count = 0;  // Track number of allocated blocks
+
+    printf("\nBest Fit Allocation:\n");
+    
+    // Best Fit Algorithm
+    for(int i = 0; i < n; i++) {
+        int bestIdx = -1;
+        int minDiff = 99999;  // Set to a large number
+
+        for(int j = 0; j < m; j++) {
+            // Check if block B[j] can accommodate process P[i]
+            if(P[i] <= B[j]) {
+                int diff = B[j] - P[i];
+                if(diff < minDiff) {
+                    minDiff = diff;
+                    bestIdx = j;
+                }
+            }
+        }
+
+        // If a suitable block is found, allocate it
+        if(bestIdx != -1) {
+            B[bestIdx] -= P[i];  // Deduct the size of the process from the block
+            printf("Process P%d allocated to Block B%d (Remaining Block Size: %d)\n", i, bestIdx, B[bestIdx]);
+        } else {
+            printf("Process P%d cannot be allocated\n", i);
+        }
+    }
+}
+
+int main() {
+    int n, m;
+
+    printf("\nEnter the number of Processes: ");
+    scanf("%d", &n);
+
+    int P[n];  // Array for Process values
+
+    printf("\nEnter %d Process Sizes: ", n);
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &P[i]);
+    }
+
+    printf("\nEnter the number of Memory Blocks: ");
+    scanf("%d", &m);
+
+    int B[m];  // Array for Memory Block sizes
+
+    printf("\nEnter %d Memory Block Sizes: ", m);
+    for(int i = 0; i < m; i++) {
+        scanf("%d", &B[i]);
+    }
+
+    // Display the processes and memory blocks
+    printf("\nProcesses and Memory Blocks:\n");
+    printf("\nP[n]          B[m]\n\n");
+    for(int i = 0; i < m; i++) {
+        if(i < n) {
+            printf("P%d = %d", i, P[i]);
+            printf("          B%d = %d\n", i, B[i]);
+        } else {
+            printf("                  B%d = %d\n", i, B[i]);
+        }
+    }
+
+    // Call Best Fit Allocation
+    bestFit(P, n, B, m);
+
+    return 0;
+}
+
+//Worst-Fit
+#include <stdio.h>
+
+void worstFit(int P[], int n, int B[], int m) {
+    int I[n];  // Array for memory block allocation markers
+    int count = 0;  // Track number of allocated blocks
+
+    printf("\nWorst Fit Allocation:\n");
+
+    // Worst Fit Algorithm
+    for(int i = 0; i < n; i++) {
+        int worstIdx = -1;
+        int maxDiff = -1;  // Set to a small number
+
+        for(int j = 0; j < m; j++) {
+            // Check if block B[j] can accommodate process P[i]
+            if(P[i] <= B[j]) {
+                int diff = B[j] - P[i];
+                if(diff > maxDiff) {
+                    maxDiff = diff;
+                    worstIdx = j;
+                }
+            }
+        }
+
+        // If a suitable block is found, allocate it
+        if(worstIdx != -1) {
+            B[worstIdx] -= P[i];  // Deduct the size of the process from the block
+            printf("Process P%d allocated to Block B%d (Remaining Block Size: %d)\n", i, worstIdx, B[worstIdx]);
+        } else {
+            printf("Process P%d cannot be allocated\n", i);
+        }
+    }
+}
+
+int main() {
+    int n, m;
+
+    printf("\nEnter the number of Processes: ");
+    scanf("%d", &n);
+
+    int P[n];  // Array for Process values
+
+    printf("\nEnter %d Process Sizes: ", n);
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &P[i]);
+    }
+
+    printf("\nEnter the number of Memory Blocks: ");
+    scanf("%d", &m);
+
+    int B[m];  // Array for Memory Block sizes
+
+    printf("\nEnter %d Memory Block Sizes: ", m);
+    for(int i = 0; i < m; i++) {
+        scanf("%d", &B[i]);
+    }
+
+    // Display the processes and memory blocks
+    printf("\nProcesses and Memory Blocks:\n");
+    printf("\nP[n]          B[m]\n\n");
+    for(int i = 0; i < m; i++) {
+        if(i < n) {
+            printf("P%d = %d", i, P[i]);
+            printf("          B%d = %d\n", i, B[i]);
+        } else {
+            printf("                  B%d = %d\n", i, B[i]);
+        }
+    }
+
+    // Call Worst Fit Allocation
+    worstFit(P, n, B, m);
+
+    return 0;
+}
+
+
